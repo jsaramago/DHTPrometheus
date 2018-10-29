@@ -3,7 +3,7 @@
 import os
 import Adafruit_DHT
 import time
-from prometheus_client import start_http_server, Gauge, CollectorRegistry, push_to_gateway
+from prometheus_client import start_http_server, Gauge, CollectorRegistry, push_to_gateway, REGISTRY
 
 
 def get_sensor(sensor_string):
@@ -23,7 +23,7 @@ pin = int(os.environ.get('SENSOR_PIN', '4'))
 httpPort = int(os.environ.get('HTTP_PORT', '8000'))
 location = os.environ.get('LOCATION', '')
 
-registry = CollectorRegistry()
+registry = REGISTRY
 temperature_gauge = Gauge('temperature', 'Temperature', ['location'], registry=registry)
 humidity_gauge = Gauge('humidity', 'Humidity', ['location'], registry=registry)
 
