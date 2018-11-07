@@ -1,6 +1,8 @@
 build
 .gradle
-src/DHT22Prometheus.egg-info
+baseStation/src/DHT22Prometheus.egg-info
 activate
 pinned.txt
 setup.cfg
+sensor/.pioenvs
+sensor/.piolibdeps
