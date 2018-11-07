@@ -9,6 +9,7 @@ from prometheus_client import Gauge
 from prometheus_client import push_to_gateway
 from prometheus_client import REGISTRY
 from zeroconf import ServiceBrowser, Zeroconf
+import requests
 
 
 class mDnsListener:
@@ -31,48 +32,71 @@ def get_sensor(sensor_string):
     elif sensor_string == "AM2302":
         return Adafruit_DHT.AM2302
     else:
-        raise Exception("Invalid sensor type (%s)" % sensor_string)
+        None
 
 
 pushGatewayServer = os.environ.get('PUSH_GATEWAY_SERVER')
-sensor = get_sensor(os.environ.get('SENSOR_TYPE'))
+localSensor = get_sensor(os.environ.get('SENSOR_TYPE'))
 pin = int(os.environ.get('SENSOR_PIN', '4'))
 httpPort = int(os.environ.get('HTTP_PORT', '8000'))
 location = os.environ.get('LOCATION', '')
 
+dnsListener = mDnsListener()
+
 browser = ServiceBrowser(
-        Zeroconf(),
-        "_temperature._tcp.local.",
-        mDnsListener()
+    Zeroconf(),
+    "_temperature._tcp.local.",
+    dnsListener
 )
 
 registry = REGISTRY
-temperature_gauge = Gauge(
+gauges = {
+    'temperature': Gauge(
         'temperature',
         'Temperature',
-        ['location'],
-        registry=registry
-)
-humidity_gauge = Gauge(
+        ['location', 'source'],
+        registry=registry),
+    'humidity': Gauge(
         'humidity',
         'Humidity',
-        ['location'],
-        registry=registry
-)
+        ['location', 'source'],
+        registry=registry)
+}
 
 if __name__ == '__main__':
     # Start up the server to expose the metrics.
     start_http_server(httpPort)
     while True:
         time.sleep(2)
-        humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 
-        temperature_gauge.labels(location).set(temperature)
-        humidity_gauge.labels(location).set(humidity)
+        toRemove = []
+        for name, addr in dnsListener.services.items():
+            try:
+                r = requests.get("http://%s" % addr).json()
+                locationLabel = r['labels']['location']
+                for sensor, value in r['sensors'].items():
+                    if sensor not in gauges:
+                        gauges[sensor] = Gauge(
+                            'humidity',
+                            'Humidity',
+                            ['location', 'source'],
+                            registry=registry
+                        )
+                    gauges[sensor].labels(locationLabel, addr).set(value)
+            except requests.exceptions.RequestException as e:
+                toRemove.append(name)
+
+        for name in toRemove:
+            dnsListener.remove_service(None, None, name)
+
+        if localSensor:
+            humidity, temperature = Adafruit_DHT.read_retry(localSensor, pin)
+            gauges['temperature'].labels(location, 'local').set(temperature)
+            gauges['humidity'].labels(location, 'local').set(humidity)
 
         if pushGatewayServer:
             push_to_gateway(
-                    pushGatewayServer,
-                    job='DTHPrometheus',
-                    registry=registry
+                pushGatewayServer,
+                job='DTHPrometheus',
+                registry=registry
             )
