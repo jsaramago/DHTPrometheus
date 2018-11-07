@@ -1,4 +1,4 @@
-FROM python:3-slim-stretch
+FROM python:3-stretch
 
 RUN apt update
 RUN apt install -y build-essential && pip3 install Adafruit_Python_DHT prometheus_client

@@ -1,0 +1,6 @@
+build
+.gradle
+src/DHT22Prometheus.egg-info
+activate
+pinned.txt
+setup.cfg
