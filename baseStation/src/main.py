@@ -79,7 +79,7 @@ if __name__ == '__main__':
                     if sensor not in gauges:
                         gauges[sensor] = Gauge(
                             sensor,
-                            sensor.capwords,
+                            string.capwords(sensor),
                             ['location', 'source'],
                             registry=registry
                         )
