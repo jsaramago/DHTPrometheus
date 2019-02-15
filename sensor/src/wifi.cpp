@@ -1,7 +1,7 @@
 #include "wifi.h"
 
-const char* ssid = "TemperatureNetwork";
-const char* password = "AardvarkBadgerHedgehog";
+const char* ssid = NETWORK_SSID;
+const char* password = NETWORK_PASSWORD;
 
 void initWifi() {
     // Connect to WiFi network

@@ -1,7 +1,7 @@
 #include "mDns.h"
 
 void initMDns(const char* hostname) {
-    if (!MDNS.begin("esp8266-0")) {
+    if (!MDNS.begin(hostname)) {
         Serial.println("Error setting up MDNS responder!");
         while (1) {
             delay(1000);

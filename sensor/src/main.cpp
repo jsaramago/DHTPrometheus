@@ -1,16 +1,24 @@
+#ifdef TEMPERATURE_PORT
 #include <DHT.h>
-#include <ArduinoJson.h>
+#endif
+#ifdef SOUND_PORT
+#include "sound.h"
+#endif
 
+#include <ArduinoJson.h>
 #include "wifi.h"
 #include "mDns.h"
 #include "ota.h"
 
-const char* hostname = "esp8266-0";
-const char* location = "Mario Desk";
+const char* hostname = HOSTNAME;
+const char* location = LOCATION;
 
 // TCP server at port 80 will respond to HTTP requests
 WiFiServer server(80);
+
+#ifdef TEMPERATURE_PORT
 DHT dht;
+#endif
 
 void waitForClient(WiFiClient* client) {
     // Wait for data from client to become available
@@ -26,7 +34,12 @@ void setup() {
     initOta(hostname);
     initMDns(hostname);
 
-    dht.setup(2);
+    #ifdef TEMPERATURE_PORT
+        dht.setup(TEMPERATURE_PORT);
+    #endif
+    #ifdef SOUND_PORT
+        initSound();
+    #endif
 
     // Start TCP (HTTP) server
     server.begin();
@@ -38,6 +51,10 @@ void setup() {
 
 void loop() {
     ArduinoOTA.handle();
+
+    #ifdef SOUND_PORT
+        handleSound();
+    #endif
 
     // Check if a client has connected
     WiFiClient client = server.available();
@@ -74,8 +91,14 @@ void loop() {
         JsonObject& labels = root.createNestedObject("labels");
 
 
+        #ifdef TEMPERATURE_PORT
         sensors[F("temperature")] = dht.getTemperature();
         sensors[F("humidity")] = dht.getHumidity();
+        #endif
+
+        #ifdef SOUND_PORT
+        sensors[F("sound")] = getSoundDiff();
+        #endif
 
         labels[F("location")] = location;
 
