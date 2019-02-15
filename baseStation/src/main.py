@@ -10,6 +10,7 @@ from prometheus_client import push_to_gateway
 from prometheus_client import REGISTRY
 from zeroconf import ServiceBrowser, Zeroconf
 import requests
+import string
 
 
 class mDnsListener:
@@ -77,8 +78,8 @@ if __name__ == '__main__':
                 for sensor, value in r['sensors'].items():
                     if sensor not in gauges:
                         gauges[sensor] = Gauge(
-                            'humidity',
-                            'Humidity',
+                            sensor,
+                            sensor.capwords,
                             ['location', 'source'],
                             registry=registry
                         )
