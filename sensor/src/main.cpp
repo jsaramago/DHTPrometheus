@@ -24,7 +24,11 @@ WiFiServer server(80);
 #endif
 #ifdef DEBUG_MODE
     RemoteDebug Debug;
+    #define DEBUG_WARNING(message) debugW(message);
+#else
+    #define DEBUG_WARNING(message)
 #endif
+
 
 void waitForClient(WiFiClient* client) {
     // Wait for data from client to become available
@@ -82,6 +86,7 @@ void loop() {
     }
     Serial.println("");
     Serial.println("New client");
+    DEBUG_WARNING("New client")
 
     waitForClient(&client);
 
@@ -100,6 +105,8 @@ void loop() {
     req = req.substring(addr_start + 1, addr_end);
     Serial.print("Request: ");
     Serial.println(req);
+    DEBUG_WARNING("Request: ")
+    DEBUG_WARNING(req)
     client.flush();
 
     String s;
@@ -129,12 +136,15 @@ void loop() {
 
 
         Serial.println("Sending 200");
+        DEBUG_WARNING("Sending 200")
     } else {
         Serial.println("Sending 404");
+        DEBUG_WARNING("Sending 404")
         client.println("HTTP/1.1 404 Not Found");
         client.println();
     }
 
     Serial.println("Done with client");
+    DEBUG_WARNING("Done with client")
 }
 

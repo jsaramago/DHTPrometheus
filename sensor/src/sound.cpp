@@ -2,15 +2,9 @@
 
 #include "sound.h"
 #include <stdlib.h>
-#include "Ticker.h"
+#include <Ticker.h>
 
-#ifdef DEBUG_MODE
-    #include <RemoteDebug.h>
-    extern RemoteDebug Debug;
-    #define DEBUG_WARNING(message) debugW(message);
-#else
-    #define DEBUG_WARNING(message)
-#endif
+#include "debug.h"
 
 
 void addSoundRead();
