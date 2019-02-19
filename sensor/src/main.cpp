@@ -105,8 +105,8 @@ void loop() {
     req = req.substring(addr_start + 1, addr_end);
     Serial.print("Request: ");
     Serial.println(req);
-    DEBUG_WARNING("Request: ")
-    DEBUG_WARNING(req)
+    DEBUG_WARNING("Request: ");
+    DEBUG_WARNING(req);
     client.flush();
 
     String s;

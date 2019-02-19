@@ -62,13 +62,16 @@ SoundReading::~SoundReading() {
 
 SoundReading largeReading(255);
 SoundReading smallReading(10);
-Ticker timer(addSoundRead, 1000, MILLIS);
+Ticker timer(addSoundRead, 1000*1000, MICROS);
 
 void initSound() {
+    DEBUG_WARNING("timer.start")
     timer.start();
+    DEBUG_WARNING(sprintf("%d", timer.state))
 }
 
 void handleSound() {
+    DEBUG_WARNING("timer.update")
     timer.update();
 }
 
