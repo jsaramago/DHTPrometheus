@@ -2,8 +2,7 @@
 
 #include "sound.h"
 #include <stdlib.h>
-#include <Ticker.h>
-#include <stdio.h>
+#include <TaskScheduler.h>
 
 #include "debug.h"
 
@@ -63,19 +62,19 @@ SoundReading::~SoundReading() {
 
 SoundReading largeReading(255);
 SoundReading smallReading(10);
-Ticker timer(addSoundRead, 1000*1000, MICROS);
+Task timer(1000, TASK_FOREVER, &addSoundRead);
+Scheduler runner;
 
 void initSound() {
     DEBUG_WARNING("timer.start");
-    timer.start();
-
-    sprintf(message_buffer, "%d", timer.state());
-    DEBUG_WARNING("State", message_buffer)
+    runner.init();
+    runner.addTask(timer);
+    timer.enable();
 }
 
 void handleSound() {
-    DEBUG_WARNING("timer.update")
-    timer.update();
+    DEBUG_DEBUG("timer.update")
+    runner.execute();
 }
 
 int getSoundDiff(){

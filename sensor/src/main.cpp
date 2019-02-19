@@ -102,13 +102,13 @@ void loop() {
     if (addr_start == -1 || addr_end == -1) {
         Serial.print("Invalid request: ");
         Serial.println(req);
-        DEBUG_WARNING("Invalid request", req.c_str())
+        DEBUG_WARNING("Invalid request: %s", req.c_str())
         return;
     }
     req = req.substring(addr_start + 1, addr_end);
     Serial.print("Request: ");
     Serial.println(req);
-    DEBUG_DEBUG("Request", req.c_str())
+    DEBUG_DEBUG("Request: %s", req.c_str())
     client.flush();
 
     String s;
