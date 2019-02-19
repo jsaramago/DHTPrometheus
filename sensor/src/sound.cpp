@@ -4,6 +4,15 @@
 #include <stdlib.h>
 #include "Ticker.h"
 
+#ifdef DEBUG_MODE
+    #include <RemoteDebug.h>
+    extern RemoteDebug Debug;
+    #define DEBUG_WARNING(message) debugW(message);
+#else
+    #define DEBUG_WARNING(message)
+#endif
+
+
 void addSoundRead();
 
 class SoundReading {
@@ -74,6 +83,7 @@ int getSoundDiff(){
 }
 
 void addSoundRead() {
+    DEBUG_WARNING("addSoundRead")
     int read = analogRead(SOUND_PORT);
     largeReading.addReading(read);
     smallReading.addReading(read);

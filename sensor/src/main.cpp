@@ -1,8 +1,11 @@
 #ifdef TEMPERATURE_PORT
-#include <DHT.h>
+    #include <DHT.h>
 #endif
 #ifdef SOUND_PORT
-#include "sound.h"
+    #include "sound.h"
+#endif
+#ifdef DEBUG_MODE
+    #include <RemoteDebug.h>
 #endif
 
 #include <ArduinoJson.h>
@@ -17,7 +20,10 @@ const char* location = LOCATION;
 WiFiServer server(80);
 
 #ifdef TEMPERATURE_PORT
-DHT dht;
+    DHT dht;
+#endif
+#ifdef DEBUG_MODE
+    RemoteDebug Debug;
 #endif
 
 void waitForClient(WiFiClient* client) {
@@ -47,10 +53,23 @@ void setup() {
 
     // Add service to MDNS-SD
     MDNS.addService("temperature", "tcp", 80);
+    #ifdef DEBUG_MODE
+        MDNS.addService("telnet", "tcp", 23);
+        Debug.begin(hostname);
+        Debug.setResetCmdEnabled(true);
+        Debug.showDebugLevel(true);
+        Debug.showTime(true);
+        Debug.showProfiler(true); // Profiler
+        Debug.showColors(true); // Colors
+    #endif
 }
 
 void loop() {
     ArduinoOTA.handle();
+
+    #ifdef DEBUG_MODE
+        Debug.handle();
+    #endif
 
     #ifdef SOUND_PORT
         handleSound();
