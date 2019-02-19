@@ -24,11 +24,11 @@ WiFiServer server(80);
 #endif
 #ifdef DEBUG_MODE
     RemoteDebug Debug;
-    #define DEBUG_WARNING(message) debugW(message);
-    #define DEBUG_DEBUG(message) debugD(message);
+    #define DEBUG_WARNING(message, ...) debugW(message, ##__VA_ARGS__);
+    #define DEBUG_DEBUG(message, ...) debugD(message, ##__VA_ARGS__);
 #else
-    #define DEBUG_WARNING(message)
-    #define DEBUG_DEBUG(message)
+    #define DEBUG_WARNING(message, ...)
+    #define DEBUG_DEBUG(message, ...)
 #endif
 
 
@@ -102,12 +102,13 @@ void loop() {
     if (addr_start == -1 || addr_end == -1) {
         Serial.print("Invalid request: ");
         Serial.println(req);
+        DEBUG_WARNING("Invalid request", req.c_str())
         return;
     }
     req = req.substring(addr_start + 1, addr_end);
     Serial.print("Request: ");
     Serial.println(req);
-    DEBUG_DEBUG("Request", req)
+    DEBUG_DEBUG("Request", req.c_str())
     client.flush();
 
     String s;

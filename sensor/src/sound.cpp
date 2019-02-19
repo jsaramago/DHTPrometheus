@@ -3,6 +3,7 @@
 #include "sound.h"
 #include <stdlib.h>
 #include <Ticker.h>
+#include <stdio.h>
 
 #include "debug.h"
 
@@ -65,9 +66,11 @@ SoundReading smallReading(10);
 Ticker timer(addSoundRead, 1000*1000, MICROS);
 
 void initSound() {
-    DEBUG_WARNING("timer.start")
+    DEBUG_WARNING("timer.start");
     timer.start();
-    DEBUG_WARNING("State", sprintf("%d", timer.state))
+
+    sprintf(message_buffer, "%d", timer.state());
+    DEBUG_WARNING("State", message_buffer)
 }
 
 void handleSound() {
