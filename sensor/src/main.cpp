@@ -88,7 +88,7 @@ void loop() {
     }
     Serial.println("");
     Serial.println("New client");
-    DEBUG_WARNING("New client")
+    DEBUG_DEBUG("New client")
 
     waitForClient(&client);
 
@@ -107,8 +107,7 @@ void loop() {
     req = req.substring(addr_start + 1, addr_end);
     Serial.print("Request: ");
     Serial.println(req);
-    DEBUG_WARNING("Request: ");
-    DEBUG_WARNING(req);
+    DEBUG_DEBUG("Request", req)
     client.flush();
 
     String s;
@@ -138,7 +137,7 @@ void loop() {
 
 
         Serial.println("Sending 200");
-        DEBUG_WARNING("Sending 200")
+        DEBUG_DEBUG("Sending 200")
     } else {
         Serial.println("Sending 404");
         DEBUG_WARNING("Sending 404")
@@ -147,6 +146,6 @@ void loop() {
     }
 
     Serial.println("Done with client");
-    DEBUG_WARNING("Done with client")
+    DEBUG_DEBUG("Done with client")
 }
 

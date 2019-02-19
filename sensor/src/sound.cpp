@@ -67,7 +67,7 @@ Ticker timer(addSoundRead, 1000*1000, MICROS);
 void initSound() {
     DEBUG_WARNING("timer.start")
     timer.start();
-    DEBUG_WARNING(sprintf("%d", timer.state))
+    DEBUG_WARNING("State", sprintf("%d", timer.state))
 }
 
 void handleSound() {
